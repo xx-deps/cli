@@ -27,11 +27,14 @@ export async function parse(absolute: string, relative: string): Promise<Result<
         return err("not a file");
     }
 
-    const mime = mimes.lookup(relative);
+    let mime = mimes.lookup(relative);
 
     if (!mime)
     {
-        return err("could not determine mime");
+        mime = mimes.extension('application/octet-stream');
+        if(!mime){
+            return err("could not determine mime");
+        }
     }
 
     const stream = await fromPromise(readFile(absolute), err => err as string);
